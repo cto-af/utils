@@ -1,6 +1,6 @@
 # @cto.af/utils
 
-Description
+Small utils useful across all of my projects.
 
 ## Installation
 
@@ -11,11 +11,6 @@ npm install @cto.af/utils
 ## API
 
 Full [API documentation](http://cto-af.github.io/utils/) is available.
-
-Example:
-
-```js
-```
 
 ---
 [![Build Status](https://github.com/cto-af/utils/workflows/Tests/badge.svg)](https://github.com/cto-af/utils/actions?query=workflow%3ATests)
