@@ -57,3 +57,30 @@ export function isCI(opts?: CiOptions): boolean {
     false
   );
 }
+
+export interface PromiseWithResolvers<T> {
+  promise: Promise<T>;
+  resolve(value: T | PromiseLike<T>): void;
+  reject(reason?: any): void;
+}
+
+const noOp = (): void => undefined;
+
+/**
+ * Polyfill for Promise.withResolvers.  Once node 22 is the minimum version,
+ * this should be removed.
+ *
+ * @template T Return type for resolve.
+ * @returns An object containing a new Promise object and two functions to
+ *   resolve or reject it, corresponding to the two parameters passed to the
+ *   executor of the Promise() constructor.
+ */
+export function promiseWithResolvers<T>(): PromiseWithResolvers<T> {
+  let resolve: (value: T | PromiseLike<T>) => void = noOp;
+  let reject: (reason?: any) => void = noOp;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return {promise, resolve, reject};
+}
