@@ -1,4 +1,4 @@
-import {errCode, isCI, isErrno} from '../lib/index.js';
+import {errCode, isCI, isErrno, promiseWithResolvers} from '../lib/index.js';
 import assert from 'node:assert';
 import test from 'node:test';
 
@@ -26,4 +26,15 @@ test('isCI', () => {
   process.env = {};
   assert.equal(isCI(), false);
   process.env = env;
+});
+
+test('promiseWithResolvers', async() => {
+  const p = promiseWithResolvers();
+  p.resolve(-1);
+  const ret = await p.promise;
+  assert.equal(ret, -1);
+
+  const r = promiseWithResolvers();
+  r.reject(new Error('foo'));
+  await assert.rejects(() => r.promise, /foo/);
 });
