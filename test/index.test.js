@@ -28,7 +28,7 @@ test('isCI', () => {
   process.env = env;
 });
 
-test('promiseWithResolvers', async() => {
+test('promiseWithResolvers', async () => {
   const p = promiseWithResolvers();
   p.resolve(-1);
   const ret = await p.promise;
