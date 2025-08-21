@@ -1,4 +1,4 @@
-import {errCode, isCI, isErrno, promiseWithResolvers} from '../lib/index.js';
+import {errCode, isCI, isErrno, promiseWithResolvers, select} from '../lib/index.js';
 import assert from 'node:assert';
 import test from 'node:test';
 
@@ -37,4 +37,22 @@ test('promiseWithResolvers', async () => {
   const r = promiseWithResolvers();
   r.reject(new Error('foo'));
   await assert.rejects(() => r.promise, /foo/);
+});
+
+test('select', () => {
+  const opts = {
+    one: 1,
+    two: 2,
+    three: 3,
+  };
+  const res = select(opts, ['one'], ['two']);
+  assert.deepEqual(res, [
+    {one: 1},
+    {two: 2},
+    {three: 3},
+  ]);
+
+  assert.deepEqual(select(null), [{}]);
+  assert.deepEqual(select({}), [{}]);
+  assert.deepEqual(select({a: 1}), [{a: 1}]);
 });

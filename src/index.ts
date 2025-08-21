@@ -84,3 +84,40 @@ export function promiseWithResolvers<T>(): PromiseWithResolvers<T> {
   });
   return {promise, resolve, reject};
 }
+
+/**
+ * Select some properties from an object into multiple other objects.
+ *
+ * @template T Composed options object.
+ * @param obj The source object.
+ * @param args Arrays of strings to select into the result
+ *   objects.
+ * @returns {Partial<Record<keyof T, any>>[]} One object for each of args,
+ *   plus an extra one for everything that was left over.
+ */
+export function select<T extends object>(
+  obj: T, ...args: (keyof T)[][]
+): Partial<T>[] {
+  const res: Partial<T>[] = args.map(() => Object.create(null));
+  const leftovers: Partial<T> = Object.create(null);
+  res.push(leftovers);
+
+  if (!obj) {
+    return res;
+  }
+
+  const sets = args.map(a => new Set(a));
+  for (const [k, v] of Object.entries(obj)) {
+    let found = false;
+    sets.forEach((s: Set<keyof T>, i: number) => {
+      if (!found && s.has(k as keyof T)) {
+        found = true;
+        res[i][k as keyof T] = v;
+      }
+    });
+    if (!found) {
+      leftovers[k as keyof T] = v;
+    }
+  }
+  return res;
+}
