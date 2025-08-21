@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+
 /**
  * Is the object an ErrnoException?
  *
@@ -83,4 +85,68 @@ export function promiseWithResolvers<T>(): PromiseWithResolvers<T> {
     reject = rej;
   });
   return {promise, resolve, reject};
+}
+
+/**
+ * Get the names of the keys of an options type, from the defaults.
+ *
+ * @template T
+ * @param defaults Default values for the options.
+ * @returns List of keys of the given object.
+ */
+export function nameSet<T extends object>(defaults: T): Set<keyof T> {
+  return new Set<keyof T>(Object.keys(defaults) as (keyof T)[]);
+}
+
+/**
+ * Assert that none of the given sets of strings share a value.
+ * Useful for validating inputs to select.
+ *
+ * @param sets Sets to check.
+ */
+export function assertDisjoint(...sets: Set<string>[]): void {
+  const seen = new Set<string>();
+  for (const s of sets) {
+    for (const i of s) {
+      assert(!seen.has(i));
+      seen.add(i);
+    }
+  }
+}
+
+/**
+ * Select some properties from an object into multiple other objects.
+ *
+ * @template T Composed options object.
+ * @param obj The source object.
+ * @param args Arrays of strings to select into the result
+ *   objects.
+ * @returns {Partial<Record<keyof T, any>>[]} One object for each of args,
+ *   plus an extra one for everything that was left over.
+ */
+export function select<T extends object>(
+  obj: T, ...args: ((keyof T)[] | Set<keyof T>)[]
+): Partial<T>[] {
+  const res: Partial<T>[] = args.map(() => Object.create(null));
+  const leftovers: Partial<T> = Object.create(null);
+  res.push(leftovers);
+
+  if (!obj) {
+    return res;
+  }
+
+  const sets = args.map(a => (a instanceof Set ? a : new Set(a)));
+  for (const [k, v] of Object.entries(obj)) {
+    let found = false;
+    sets.forEach((s: Set<keyof T>, i: number) => {
+      if (!found && s.has(k as keyof T)) {
+        found = true;
+        res[i][k as keyof T] = v;
+      }
+    });
+    if (!found) {
+      leftovers[k as keyof T] = v;
+    }
+  }
+  return res;
 }
