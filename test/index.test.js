@@ -1,4 +1,12 @@
-import {errCode, isCI, isErrno, promiseWithResolvers, select} from '../lib/index.js';
+import {
+  assertDisjoint,
+  errCode,
+  isCI,
+  isErrno,
+  nameSet,
+  promiseWithResolvers,
+  select,
+} from '../lib/index.js';
 import assert from 'node:assert';
 import test from 'node:test';
 
@@ -39,6 +47,21 @@ test('promiseWithResolvers', async () => {
   await assert.rejects(() => r.promise, /foo/);
 });
 
+test('nameSet', () => {
+  const s = nameSet({a: 1, b: 2});
+  assert.deepEqual(s, new Set(['a', 'b']));
+});
+
+test('assertDisjoint', () => {
+  assert.throws(
+    () => assertDisjoint(new Set(['a', 'c']), new Set(['a', 'b'])),
+    assert.AssertionError
+  );
+  assert.doesNotThrow(
+    () => assertDisjoint(new Set(['a', 'c']), new Set('b', 'd'))
+  );
+});
+
 test('select', () => {
   const opts = {
     one: 1,
@@ -55,4 +78,5 @@ test('select', () => {
   assert.deepEqual(select(null), [{}]);
   assert.deepEqual(select({}), [{}]);
   assert.deepEqual(select({a: 1}), [{a: 1}]);
+  assert.deepEqual(select({a: 1}, new Set(['a'])), [{a: 1}, {}]);
 });
