@@ -103,11 +103,24 @@ export function nameSet<T extends object>(defaults: T): Set<keyof T> {
  * Useful for validating inputs to select.
  *
  * @param sets Sets to check.
+ * @throws If sets are the wrong type.
  */
-export function assertDisjoint(...sets: Set<string>[]): void {
+export function assertDisjoint(
+  ...sets: (Set<string> | string[] | object)[]
+): void {
   const seen = new Set<string>();
   for (const s of sets) {
-    for (const i of s) {
+    let it: Iterable<string> | null = null;
+    if (Array.isArray(s)) {
+      it = s;
+    } else if (s instanceof Set) {
+      it = s;
+    } else if ((typeof s === 'object') && s) {
+      it = Object.keys(s);
+    } else {
+      throw new Error('Invalid set');
+    }
+    for (const i of it) {
       assert(!seen.has(i));
       seen.add(i);
     }
@@ -125,9 +138,25 @@ export function assertDisjoint(...sets: Set<string>[]): void {
  *   plus an extra one for everything that was left over.
  */
 export function select<T extends object>(
-  obj: T, ...args: ((keyof T)[] | Set<keyof T>)[]
+  obj: T, ...args: (Partial<T> | (keyof T)[] | Set<keyof T>)[]
 ): Partial<T>[] {
-  const res: Partial<T>[] = args.map(() => Object.create(null));
+  const sets: Set<keyof T>[] = [];
+  const res: Partial<T>[] = args.map(a => {
+    const ret = Object.create(null);
+    if (Array.isArray(a)) {
+      sets.push(new Set(a));
+      return ret;
+    }
+    if (a instanceof Set) {
+      sets.push(a);
+      return ret;
+    }
+    if (!a || (typeof a !== 'object')) {
+      throw new Error('Invalid set');
+    }
+    sets.push(nameSet(a));
+    return Object.assign(ret, a);
+  });
   const leftovers: Partial<T> = Object.create(null);
   res.push(leftovers);
 
@@ -135,7 +164,6 @@ export function select<T extends object>(
     return res;
   }
 
-  const sets = args.map(a => (a instanceof Set ? a : new Set(a)));
   for (const [k, v] of Object.entries(obj)) {
     let found = false;
     sets.forEach((s: Set<keyof T>, i: number) => {

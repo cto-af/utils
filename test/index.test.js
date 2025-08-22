@@ -54,12 +54,13 @@ test('nameSet', () => {
 
 test('assertDisjoint', () => {
   assert.throws(
-    () => assertDisjoint(new Set(['a', 'c']), new Set(['a', 'b'])),
+    () => assertDisjoint(new Set(['a', 'c']), ['a', 'b']),
     assert.AssertionError
   );
   assert.doesNotThrow(
-    () => assertDisjoint(new Set(['a', 'c']), new Set('b', 'd'))
+    () => assertDisjoint(new Set(['a', 'c']), {b: 1, d: 2})
   );
+  assert.throws(() => assertDisjoint(null));
 });
 
 test('select', () => {
@@ -79,4 +80,6 @@ test('select', () => {
   assert.deepEqual(select({}), [{}]);
   assert.deepEqual(select({a: 1}), [{a: 1}]);
   assert.deepEqual(select({a: 1}, new Set(['a'])), [{a: 1}, {}]);
+  assert.deepEqual(select({a: 1, b: 1}, {b: 2, c: 3}), [{b: 1, c: 3}, {a: 1}]);
+  assert.throws(() => select({a: 1}, null), /Invalid set/);
 });

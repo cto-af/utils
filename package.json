@@ -22,7 +22,7 @@
     "clean": "rm -rf coverage docs lib",
     "lint": "eslint .",
     "pretest": "tsup --sourcemap inline",
-    "test": "c8 node --test",
+    "test": "c8 node --enable-source-maps --test",
     "posttest": "tsup --silent",
     "docs": "typedoc",
     "ts": "tsup",
