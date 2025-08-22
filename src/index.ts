@@ -142,19 +142,20 @@ export function select<T extends object>(
 ): Partial<T>[] {
   const sets: Set<keyof T>[] = [];
   const res: Partial<T>[] = args.map(a => {
+    const ret = Object.create(null);
     if (Array.isArray(a)) {
       sets.push(new Set(a));
-      return Object.create(null);
+      return ret;
     }
     if (a instanceof Set) {
       sets.push(a);
-      return Object.create(null);
+      return ret;
     }
     if (!a || (typeof a !== 'object')) {
       throw new Error('Invalid set');
     }
     sets.push(nameSet(a));
-    return {...a};
+    return Object.assign(ret, a);
   });
   const leftovers: Partial<T> = Object.create(null);
   res.push(leftovers);
