@@ -127,32 +127,43 @@ export function assertDisjoint(
   }
 }
 
+export type Selector<T> = Partial<T> | (keyof T)[] | Set<keyof T>;
+
 /**
  * Select some properties from an object into multiple other objects.
+ * All unselected fields will be contained in a final object for the
+ * "leftovers", meaning there will always be at least one element in the
+ * result array.  If the first selector is a set of defaults, the type from
+ * that object will be copied to the first element of the result array.
  *
  * @template T Composed options object.
+ * @template U May be a Required<Partial<T>> type.
  * @param obj The source object.
+ * @param defaults Defaults object or field names.
  * @param args Arrays of strings to select into the result
  *   objects.
  * @returns {Partial<Record<keyof T, any>>[]} One object for each of args,
  *   plus an extra one for everything that was left over.
  */
-export function select<T extends object>(
-  obj: T, ...args: (Partial<T> | (keyof T)[] | Set<keyof T>)[]
-): Partial<T>[] {
+export function select<T extends object, U extends Selector<T>>(
+  obj: T, defaults?: U, ...args: Selector<T>[]
+): [U extends Partial<T> ? U : Partial<T>, ...Partial<T>[]] {
+  if (defaults !== undefined) {
+    args.unshift(defaults);
+  }
   const sets: Set<keyof T>[] = [];
   const res: Partial<T>[] = args.map(a => {
     const ret = Object.create(null);
-    if (Array.isArray(a)) {
-      sets.push(new Set(a));
-      return ret;
-    }
     if (a instanceof Set) {
       sets.push(a);
       return ret;
     }
+    if (Array.isArray(a)) {
+      sets.push(new Set(a));
+      return ret;
+    }
     if (!a || (typeof a !== 'object')) {
-      throw new Error('Invalid set');
+      throw new Error(`Invalid set: ${a}`);
     }
     sets.push(nameSet(a));
     return Object.assign(ret, a);
@@ -161,7 +172,7 @@ export function select<T extends object>(
   res.push(leftovers);
 
   if (!obj) {
-    return res;
+    return res as [U extends Partial<T> ? U : Partial<T>, ...Partial<T>[]];
   }
 
   for (const [k, v] of Object.entries(obj)) {
@@ -176,5 +187,5 @@ export function select<T extends object>(
       leftovers[k as keyof T] = v;
     }
   }
-  return res;
+  return res as [U extends Partial<T> ? U : Partial<T>, ...Partial<T>[]];
 }
