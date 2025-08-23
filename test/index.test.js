@@ -82,4 +82,5 @@ test('select', () => {
   assert.deepEqual(select({a: 1}, new Set(['a'])), [{a: 1}, {}]);
   assert.deepEqual(select({a: 1, b: 1}, {b: 2, c: 3}), [{b: 1, c: 3}, {a: 1}]);
   assert.throws(() => select({a: 1}, null), /Invalid set/);
+  assert.throws(() => select({a: 1}, 'foo'));
 });
