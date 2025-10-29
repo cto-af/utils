@@ -1,4 +1,42 @@
-import assert from 'node:assert/strict';
+export class AssertionError extends Error {
+  public constructor(actual: unknown, expected: unknown, message?: string) {
+    let generatedMessage = false;
+    if (!message) {
+      message = `The expression evaluated to a falsy value:\n\n  assert(${actual})\n`;
+      generatedMessage = true;
+    }
+    super(message);
+    Object.assign(this, {
+      code: 'ERR_ASSERTION',
+      actual,
+      expected,
+      operator: '==',
+      generatedMessage,
+    });
+  }
+
+  public toString(): string {
+    return `AssertionError [ERR_ASSERTION]: ${this.message}`;
+  }
+}
+
+/**
+ * Very simplified assert, which will work in the browser.
+ *
+ * @param value Any value that should be truthy.
+ * @param message Optional message.
+ * @throws {AssertionError} If value is falsy.
+ */
+export function assert(value: unknown, message?: string): asserts value {
+  if (value) {
+    return;
+  }
+  throw new AssertionError(value, true, message);
+}
+
+export type Pretty<T> = {
+  [K in keyof T]: T[K];
+} & {};
 
 /**
  * Is the object an ErrnoException?
@@ -121,7 +159,7 @@ export function assertDisjoint(
       throw new Error('Invalid set');
     }
     for (const i of it) {
-      assert(!seen.has(i));
+      assert(!seen.has(i), i);
       seen.add(i);
     }
   }
@@ -134,7 +172,8 @@ export type Selector<T> = Partial<T> | (keyof T)[] | Set<keyof T>;
  * All unselected fields will be contained in a final object for the
  * "leftovers", meaning there will always be at least one element in the
  * result array.  If the first selector is a set of defaults, the type from
- * that object will be copied to the first element of the result array.
+ * that object will be copied to the first element of the result array
+ * and subtracted from the rest of the results.
  *
  * @template T Composed options object.
  * @template U May be a Required<Partial<T>> type.
@@ -147,7 +186,8 @@ export type Selector<T> = Partial<T> | (keyof T)[] | Set<keyof T>;
  */
 export function select<T extends object, U extends Selector<T>>(
   obj: T, defaults?: U, ...args: Selector<T>[]
-): [U extends Partial<T> ? U : Partial<T>, ...Partial<T>[]] {
+): [U extends Partial<T> ? U : Partial<T>,
+  ...Pretty<Omit<Partial<T>, keyof U>>[]] {
   if (defaults !== undefined) {
     args.unshift(defaults);
   }
