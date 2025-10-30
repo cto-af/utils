@@ -38,13 +38,20 @@ export type Pretty<T> = {
   [K in keyof T]: T[K];
 } & {};
 
+export interface ErrnoException extends Error {
+  errno?: number | undefined;
+  code?: string | undefined;
+  path?: string | undefined;
+  syscall?: string | undefined;
+}
+
 /**
  * Is the object an ErrnoException?
  *
  * @param e Object to check.
  * @returns Type assertion.
  */
-export function isErrno(e: unknown): e is NodeJS.ErrnoException {
+export function isErrno(e: unknown): e is ErrnoException {
   return (e instanceof Error) &&
     Object.prototype.hasOwnProperty.call(e, 'code');
 }
@@ -86,7 +93,11 @@ export function isCI(opts?: CiOptions): boolean {
     return Boolean(opts.CI);
   }
 
-  const {env} = process;
+  if (typeof process === 'undefined') {
+    return false;
+  }
+  const {env} = process as unknown as {env: {[key: string]: string}};
+
   return Boolean(
     // Travis CI, CircleCI, Cirrus CI, Gitlab CI, Appveyor, CodeShip, dsari,
     // GitHub Actions
@@ -128,7 +139,7 @@ export function promiseWithResolvers<T>(): PromiseWithResolvers<T> {
 /**
  * Get the names of the keys of an options type, from the defaults.
  *
- * @template T
+ * @template T Options type.
  * @param defaults Default values for the options.
  * @returns List of keys of the given object.
  */
@@ -141,7 +152,7 @@ export function nameSet<T extends object>(defaults: T): Set<keyof T> {
  * Useful for validating inputs to select.
  *
  * @param sets Sets to check.
- * @throws If sets are the wrong type.
+ * @throws {AssertionError} If sets are the wrong type.
  */
 export function assertDisjoint(
   ...sets: (Set<string> | string[] | object)[]
@@ -181,7 +192,7 @@ export type Selector<T> = Partial<T> | (keyof T)[] | Set<keyof T>;
  * @param defaults Defaults object or field names.
  * @param args Arrays of strings to select into the result
  *   objects.
- * @returns {Partial<Record<keyof T, any>>[]} One object for each of args,
+ * @returns One object for each of args,
  *   plus an extra one for everything that was left over.
  */
 export function select<T extends object, U extends Selector<T>>(
