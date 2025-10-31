@@ -176,7 +176,42 @@ export function assertDisjoint(
   }
 }
 
-export type Selector<T> = Partial<T> | (keyof T)[] | Set<keyof T>;
+/**
+ * Select with a defaults object, a list of keys, or a set of keys.  The
+ * set of keys might perform better, but we can't extract types from it.
+ *
+ * @template T Options object, where most properties are optional.
+ */
+export type Selector<T extends object> =
+  Partial<T> |
+  (keyof T)[] |
+  Set<keyof T>;
+
+/**
+ * A defaults object extracts a required subset of T.
+ * A list of keys extracts a partial subset of T with those possible keys.
+ * A Set extracts a full partial of T.
+ *
+ * @template T Options object, where most properties are optional.
+ * @template U Selector.
+ */
+export type Selected<T extends object, U extends Selector<T>> =
+  U extends Partial<T> ? U :
+    U extends (keyof T)[] ?
+      Pretty<Partial<Pick<T, U[number]>>> :
+      Partial<T>;
+
+/**
+ * The keys that were selected.
+ *
+ * @template T Options object, where most properties are optional.
+ * @template U Selector.
+ */
+export type SelectedKeys<T extends object, U extends Selector<T>> =
+  U extends Partial<T> ? keyof U :
+    U extends (keyof T)[] ?
+      U[number] :
+      never;
 
 /**
  * Select some properties from an object into multiple other objects.
@@ -189,21 +224,41 @@ export type Selector<T> = Partial<T> | (keyof T)[] | Set<keyof T>;
  * @template T Composed options object.
  * @template U May be a Required<Partial<T>> type.
  * @param obj The source object.
- * @param defaults Defaults object or field names.
- * @param args Arrays of strings to select into the result
- *   objects.
+ * @param defaultsU Defaults object or field names.
  * @returns One object for each of args,
  *   plus an extra one for everything that was left over.
  */
 export function select<T extends object, U extends Selector<T>>(
-  obj: T, defaults?: U, ...args: Selector<T>[]
-): [U extends Partial<T> ? U : Partial<T>,
-  ...Pretty<Omit<Partial<T>, keyof U>>[]] {
-  if (defaults !== undefined) {
-    args.unshift(defaults);
-  }
+  obj: T, defaultsU: U
+): [Selected<T, U>, Pretty<Omit<T, SelectedKeys<T, U>>>];
+export function select<
+  T extends object,
+  U extends Selector<T>,
+  V extends Selector<T>
+>(obj: T, defaultsU: U, defaultsV: V): [
+  Selected<T, U>,
+  Selected<T, V>,
+  Pretty<Omit<T, SelectedKeys<T, U> | SelectedKeys<T, V>>>,
+];
+export function select<
+  T extends object,
+  U extends Selector<T>,
+  V extends Selector<T>,
+  W extends Selector<T>
+>(obj: T, defaultsU: U, defaultsV: V, defaultsW: W): [
+  Selected<T, U>,
+  Selected<T, V>,
+  Selected<T, W>,
+  Pretty<Omit<T,
+    SelectedKeys<T, U> |
+    SelectedKeys<T, V> |
+    SelectedKeys<T, W>>>,
+];
+export function select<T>(
+  obj: T, ...defaults: (object | string[] | Set<keyof T>)[]
+): object[] {
   const sets: Set<keyof T>[] = [];
-  const res: Partial<T>[] = args.map(a => {
+  const res: Partial<T>[] = defaults.map(a => {
     const ret = Object.create(null);
     if (a instanceof Set) {
       sets.push(a);
@@ -223,7 +278,7 @@ export function select<T extends object, U extends Selector<T>>(
   res.push(leftovers);
 
   if (!obj) {
-    return res as [U extends Partial<T> ? U : Partial<T>, ...Partial<T>[]];
+    return res;
   }
 
   for (const [k, v] of Object.entries(obj)) {
@@ -231,12 +286,12 @@ export function select<T extends object, U extends Selector<T>>(
     sets.forEach((s: Set<keyof T>, i: number) => {
       if (!found && s.has(k as keyof T)) {
         found = true;
-        res[i][k as keyof T] = v;
+        res[i][k as keyof T] = v as T[keyof T];
       }
     });
     if (!found) {
-      leftovers[k as keyof T] = v;
+      leftovers[k as keyof T] = v as T[keyof T];
     }
   }
-  return res as [U extends Partial<T> ? U : Partial<T>, ...Partial<T>[]];
+  return res;
 }

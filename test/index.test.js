@@ -31,10 +31,14 @@ test('isCI', () => {
   assert.equal(isCI({CI: false}), false);
   assert.equal(isCI({}), CI);
 
+  const p = process;
   const {env} = process;
   process.env = {};
   assert.equal(isCI(), false);
   process.env = env;
+  delete globalThis.process;
+  assert.equal(isCI(), false);
+  globalThis.process = p;
 });
 
 test('promiseWithResolvers', async () => {

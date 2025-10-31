@@ -21,11 +21,11 @@
   "scripts": {
     "clean": "rm -rf coverage docs lib",
     "lint": "eslint .",
-    "pretest": "tsup --sourcemap inline",
+    "pretest": "tsdown --sourcemap",
     "test": "c8 node --enable-source-maps --test",
-    "posttest": "tsup --silent",
+    "posttest": "tsdown --silent",
     "docs": "typedoc",
-    "ts": "tsup",
+    "ts": "tsdown",
     "build": "npm run test && npm run lint && npm run docs && npm pack --dry-run"
   },
   "devDependencies": {
@@ -35,7 +35,7 @@
     "c8": "10.1.3",
     "eslint": "9.38.0",
     "eslint-plugin-jsdoc": "61.1.11",
-    "tsup": "8.5.0",
+    "tsdown": "^0.15.12",
     "typedoc": "0.28.14",
     "typescript": "5.9.3",
     "typescript-eslint": "8.46.2"
