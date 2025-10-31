@@ -1,4 +1,5 @@
 import {
+  AssertionError,
   assertDisjoint,
   errCode,
   isCI,
@@ -30,10 +31,14 @@ test('isCI', () => {
   assert.equal(isCI({CI: false}), false);
   assert.equal(isCI({}), CI);
 
+  const p = process;
   const {env} = process;
   process.env = {};
   assert.equal(isCI(), false);
   process.env = env;
+  delete globalThis.process;
+  assert.equal(isCI(), false);
+  globalThis.process = p;
 });
 
 test('promiseWithResolvers', async () => {
@@ -52,10 +57,18 @@ test('nameSet', () => {
   assert.deepEqual(s, new Set(['a', 'b']));
 });
 
+test('assert', () => {
+  const a = new AssertionError('bad', 'good', 'msgfoo');
+  assert.equal(a.message, 'msgfoo');
+  assert.equal(a.toString(), 'AssertionError [ERR_ASSERTION]: msgfoo');
+  const b = new AssertionError('bad', 'good');
+  assert.equal(b.message, 'The expression evaluated to a falsy value:\n\n  assert(bad)\n');
+});
+
 test('assertDisjoint', () => {
   assert.throws(
     () => assertDisjoint(new Set(['a', 'c']), ['a', 'b']),
-    assert.AssertionError
+    AssertionError
   );
   assert.doesNotThrow(
     () => assertDisjoint(new Set(['a', 'c']), {b: 1, d: 2})
@@ -75,6 +88,11 @@ test('select', () => {
     {two: 2},
     {three: 3},
   ]);
+
+  const defaults = {one: 2, two: 3, four: 5};
+  const [optOne, others] = select(opts, defaults);
+  assert.deepEqual(optOne, {one: 1, two: 2, four: 5});
+  assert.deepEqual(others, {three: 3});
 
   assert.deepEqual(select(null), [{}]);
   assert.deepEqual(select({}), [{}]);
