@@ -8,7 +8,7 @@
   ],
   "exports": {
     ".": "./lib/index.mjs",
-    "u8": "./lib/u8.mjs"
+    "./u8": "./lib/u8.mjs"
   },
   "type": "module",
   "author": "Joe Hildebrand <joe-github@cursive.net>",
