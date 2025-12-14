@@ -1,29 +1,26 @@
+import * as impl from './u8Impl.ts';
+
 /**
  * Convert hex string to bytes.
  *
  * @param str String.
  * @returns Buffer.
  */
-export function hexToU8(str: string): Uint8Array {
-  str = str.replace(/\s/g, '');
-  let len = Math.ceil(str.length / 2);
-  const res = new Uint8Array(len);
-  len--;
-  for (let end = str.length, start = end - 2;
-    end >= 0;
-    end = start, start -= 2, len--
-  ) {
-    res[len] = parseInt(str.substring(start, end), 16);
-  }
-
-  return res;
-}
+const hexToU8: (s: string) => Uint8Array =
+  // @ts-expect-error fromHex not in types yet
+  Uint8Array.fromHex as typeof impl.hexToU8 ??
+  impl.hexToU8;
 
 /**
  * Convert bytes to hex string.
  * @param u8 Bytes.
  * @returns Hex.
  */
-export function u8toHex(u8: Uint8Array): string {
-  return u8.reduce((t, v) => t + v.toString(16).padStart(2, '0'), '');
-}
+const u8toHex: (u8: Uint8Array) => string =
+  // @ts-expect-error toHex not in types yet
+  Uint8Array.prototype.toHex ? impl.u8toHexModern : impl.u8toHex;
+
+export {
+  hexToU8,
+  u8toHex,
+};

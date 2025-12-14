@@ -12,7 +12,7 @@ export default defineConfig({
   },
   outDir: 'lib',
   sourcemap: false,
-  splitting: true,
+  splitting: false,
   target: 'es2022',
   unbundle: true,
 });

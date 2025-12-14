@@ -5,6 +5,11 @@ import jts from '@cto.af/eslint-config/jsdoc_ts.js';
 import markdown from '@cto.af/eslint-config/markdown.js';
 import ts from '@cto.af/eslint-config/ts.js';
 
+ts[1].settings.n.typescriptExtensionMap = [
+  ['.js', '.js'],
+  ['.ts', '.ts'],
+];
+
 export default [
   {
     ignores: [
