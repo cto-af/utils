@@ -4,12 +4,15 @@ export default defineConfig({
   clean: true,
   dts: true,
   entry: [
-    'src/index.ts',
+    'src/*.ts',
   ],
   format: 'esm',
-  minify: true,
+  minify: {
+    mangle: false,
+  },
   outDir: 'lib',
   sourcemap: false,
-  splitting: false,
+  splitting: true,
   target: 'es2022',
+  unbundle: true,
 });
