@@ -32,7 +32,7 @@
     "build": "npm run test && npm run lint && npm run docs && npm pack --dry-run"
   },
   "devDependencies": {
-    "@cto.af/eslint-config": "6.2.4",
+    "@cto.af/eslint-config": "6.2.5",
     "@eslint/markdown": "7.5.1",
     "@types/node": "25.3.3",
     "c8": "11.0.0",

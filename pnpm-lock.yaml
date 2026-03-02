@@ -12,8 +12,8 @@ importers:
   .:
     devDependencies:
       '@cto.af/eslint-config':
-        specifier: 6.2.4
-        version: 6.2.4(eslint@10.0.2)(typescript@5.9.3)
+        specifier: 6.2.5
+        version: 6.2.5(eslint@10.0.2)(typescript@5.9.3)
       '@eslint/markdown':
         specifier: 7.5.1
         version: 7.5.1
@@ -69,8 +69,8 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@cto.af/eslint-config@6.2.4':
-    resolution: {integrity: sha512-iHS21DpdDFxWJrfOwHaYp1Dvz2G6kH3aHIbhvXNpj9Y7roqn4wYzyt92yI32eX5wecVUl4Df/r7+4cq32QbODQ==}
+  '@cto.af/eslint-config@6.2.5':
+    resolution: {integrity: sha512-o0Pv/Tcdklmr+jXEn5WBjBReggaLo5BgSbgsQUCa+AB0glM33UJTxMi4TpbNEY+mc8IvY+1TUBLRZLRPFfXgBw==}
     engines: {node: '>=20'}
 
   '@emnapi/core@1.8.1':
@@ -778,8 +778,8 @@ packages:
     resolution: {integrity: sha512-7ACyT3wmyp3I61S4fG682L0VA2RGD9otkqGJIwNUMF1SWUombIIk+af1unuDYgMm082aHYwD+mzJvv9Iu8dsgg==}
     engines: {node: '>=18'}
 
-  globals@17.3.0:
-    resolution: {integrity: sha512-yMqGUQVVCkD4tqjOJf3TnrvaaHDMYp4VlUSObbkIiuCPe/ofdMBFIAcBbCSRFWOnos6qRiTVStDwqPLUclaxIw==}
+  globals@17.4.0:
+    resolution: {integrity: sha512-hjrNztw/VajQwOLsMNT1cbJiH2muO3OROCHnbehc8eY5JyD2gqz4AcMHPqgaOR59DjgUjYAYLeH699g/eWi2jw==}
     engines: {node: '>=18'}
 
   globrex@0.1.2:
@@ -1382,13 +1382,13 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@cto.af/eslint-config@6.2.4(eslint@10.0.2)(typescript@5.9.3)':
+  '@cto.af/eslint-config@6.2.5(eslint@10.0.2)(typescript@5.9.3)':
     dependencies:
       '@eslint/json': 1.0.1
       '@stylistic/eslint-plugin': 5.9.0(eslint@10.0.2)
       eslint-plugin-n: 17.24.0(eslint@10.0.2)(typescript@5.9.3)
       eslint-plugin-redos: 4.4.5(eslint@10.0.2)
-      globals: 17.3.0
+      globals: 17.4.0
     transitivePeerDependencies:
       - eslint
       - typescript
@@ -2078,7 +2078,7 @@ snapshots:
 
   globals@15.15.0: {}
 
-  globals@17.3.0: {}
+  globals@17.4.0: {}
 
   globrex@0.1.2: {}
 
