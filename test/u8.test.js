@@ -1,5 +1,5 @@
-import * as impl from '../lib/u8Impl.mjs';
-import {hexToU8, u8toHex} from '../lib/u8.mjs';
+import * as impl from '../lib/u8Impl.js';
+import {hexToU8, u8toHex} from '../lib/u8.js';
 import assert from 'node:assert';
 import test from 'node:test';
 

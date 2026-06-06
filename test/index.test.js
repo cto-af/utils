@@ -7,7 +7,7 @@ import {
   nameSet,
   promiseWithResolvers,
   select,
-} from '../lib/index.mjs';
+} from '../lib/index.js';
 import assert from 'node:assert';
 import test from 'node:test';
 
