@@ -1,6 +1,6 @@
 import * as impl from '../lib/u8Impl.js';
 import {hexToU8, u8toHex} from '../lib/u8.js';
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import test from 'node:test';
 
 test('u8', async () => {
