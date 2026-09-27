@@ -8,7 +8,7 @@ import {
   promiseWithResolvers,
   select,
 } from '../lib/index.js';
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import test from 'node:test';
 
 test('isErrno', () => {
@@ -84,21 +84,21 @@ test('select', () => {
   };
   const res = select(opts, ['one'], ['two']);
   assert.deepEqual(res, [
-    {one: 1},
-    {two: 2},
-    {three: 3},
+    Object.assign(Object.create(null), {one: 1}),
+    Object.assign(Object.create(null), {two: 2}),
+    Object.assign(Object.create(null), {three: 3}),
   ]);
 
   const defaults = {one: 2, two: 3, four: 5};
   const [optOne, others] = select(opts, defaults);
-  assert.deepEqual(optOne, {one: 1, two: 2, four: 5});
-  assert.deepEqual(others, {three: 3});
+  assert.deepEqual(optOne, Object.assign(Object.create(null), {one: 1, two: 2, four: 5}));
+  assert.deepEqual(others, Object.assign(Object.create(null), {three: 3}));
 
-  assert.deepEqual(select(null), [{}]);
-  assert.deepEqual(select({}), [{}]);
-  assert.deepEqual(select({a: 1}), [{a: 1}]);
-  assert.deepEqual(select({a: 1}, new Set(['a'])), [{a: 1}, {}]);
-  assert.deepEqual(select({a: 1, b: 1}, {b: 2, c: 3}), [{b: 1, c: 3}, {a: 1}]);
+  assert.deepEqual(select(null), [{__proto__: null}]);
+  assert.deepEqual(select({}), [{__proto__: null}]);
+  assert.deepEqual(select({a: 1}), [{a: 1, __proto__: null}]);
+  assert.deepEqual(select({a: 1}, new Set(['a'])), [{a: 1, __proto__: null}, {__proto__: null}]);
+  assert.deepEqual(select({a: 1, b: 1}, {b: 2, c: 3}), [{b: 1, c: 3, __proto__: null}, {a: 1, __proto__: null}]);
   assert.throws(() => select({a: 1}, null), /Invalid set/);
   assert.throws(() => select({a: 1}, 'foo'));
 });

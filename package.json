@@ -28,22 +28,22 @@
     "test": "c8 node --enable-source-maps --test",
     "posttest": "npm run ts",
     "docs": "typedoc",
-    "ts": "tsgo",
+    "ts": "tsc",
     "build": "npm run test && npm run lint && npm run docs && npm pack --dry-run"
   },
   "devDependencies": {
-    "@cto.af/eslint-config": "^7.0.2",
-    "@eslint/markdown": "^8.0.2",
-    "@types/node": "^25.9.2",
-    "@typescript/native-preview": "7.0.0-dev.20260606.1",
-    "eslint": "^10.4.1",
-    "eslint-plugin-jsdoc": "^63.0.2",
+    "@cto.af/eslint-config": "^7.0.3",
+    "@eslint/markdown": "^8.0.3",
+    "@types/node": "^26.6.2",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "eslint-plugin-jsdoc": "^64.5.4",
+    "eslint": "^10.11.0",
     "superc8": "^12.7.0",
-    "typedoc": "^0.28.19",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.60.1"
+    "typedoc": "^0.28.20",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript-eslint": "^8.70.0"
   },
-  "packageManager": "pnpm@11.5.2",
+  "packageManager": "pnpm@12.5.1",
   "engines": {
     "node": ">=22"
   }
