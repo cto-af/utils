@@ -229,7 +229,8 @@ export type SelectedKeys<T extends object, U extends Selector<T>> =
  *   plus an extra one for everything that was left over.
  */
 export function select<T extends object, U extends Selector<T>>(
-  obj: T, defaultsU: U
+  obj: T,
+  defaultsU: U
 ): [Selected<T, U>, Pretty<Omit<T, SelectedKeys<T, U>>>];
 export function select<
   T extends object,
@@ -249,13 +250,16 @@ export function select<
   Selected<T, U>,
   Selected<T, V>,
   Selected<T, W>,
-  Pretty<Omit<T,
+  Pretty<Omit<
+    T,
     SelectedKeys<T, U> |
     SelectedKeys<T, V> |
-    SelectedKeys<T, W>>>,
+    SelectedKeys<T, W>
+  >>,
 ];
 export function select<T>(
-  obj: T, ...defaults: (object | string[] | Set<keyof T>)[]
+  obj: T,
+  ...defaults: (object | string[] | Set<keyof T>)[]
 ): object[] {
   const sets: Set<keyof T>[] = [];
   const res: Partial<T>[] = defaults.map(a => {

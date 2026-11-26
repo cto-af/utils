@@ -7,7 +7,6 @@ import * as impl from './u8Impl.ts';
  * @returns Buffer.
  */
 const hexToU8: (s: string) => Uint8Array =
-  // @ts-expect-error fromHex not in types yet
   Uint8Array.fromHex as typeof impl.hexToU8 ??
   impl.hexToU8;
 
