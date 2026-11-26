@@ -34,6 +34,5 @@ export function u8toHex(u8: Uint8Array): string {
  * @returns Hex.
  */
 export function u8toHexModern(u8: Uint8Array): string {
-  // @ts-expect-error toHex not in types yet
   return u8.toHex();
 }
